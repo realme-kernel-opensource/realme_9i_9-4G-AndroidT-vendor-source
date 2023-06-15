@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+
+#include "../../qcom/khaje-qrd-nopmi-overlay.dts"
+#include "khaje_overlay_common.dtsi"
+#include "khaje_21311_overlay_common.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. KHAJE QRD nopmi overlay, panther";
+    oplus,dtsi_no = <21311 22252>;
+};

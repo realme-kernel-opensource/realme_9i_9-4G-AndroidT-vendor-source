@@ -1,0 +1,13 @@
+/dts-v1/;
+/plugin/;
+
+#include "../../qcom/khaje-qrd-nopmi-overlay.dts"
+#include "khaje_overlay_common.dtsi"
+#include "khaje_21030_overlay_common.dtsi"
+#include "reeves-charger-EVT.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. KHAJE QRD nopmi overlay, reeves";
+    oplus,dtsi_no = <21030>;
+    oplus,pcb_range = <0 30>;
+};

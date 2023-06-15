@@ -1,0 +1,533 @@
+#include "sensor/kasa-sensor-mtp.dtsi"
+#include "kasa-charger.dtsi"
+#include "camera/bengal-kasa-216C1-camera-sensor-qrd.dtsi"
+
+&soc {
+	/delete-node/ qupv3_se2_i2c;
+	qupv3_se2_spi: spi@4a88000 {
+		compatible = "qcom,spi-geni";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x4a88000 0x4000>;
+		reg-names = "se_phys";
+		clock-names = "se-clk", "m-ahb", "s-ahb";
+		clocks = <&gcc GCC_QUPV3_WRAP0_S2_CLK>,
+		<&gcc GCC_QUPV3_WRAP_0_M_AHB_CLK>,
+		<&gcc GCC_QUPV3_WRAP_0_S_AHB_CLK>;
+		pinctrl-names = "default", "sleep";
+		pinctrl-0 = <&qupv3_se2_spi_active &qupv3_se2_spi_miso_active &qupv3_se2_spi_cs_active>;
+		pinctrl-1 = <&qupv3_se2_spi_sleep &qupv3_se2_spi_miso_sleep &qupv3_se2_spi_cs_sleep>;
+
+		interrupts = <GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH>;
+		spi-max-frequency = <50000000>;
+		qcom,wrapper-core = <&qupv3_0>;
+		dmas = <&gpi_dma0 0 2 1 64 0>,
+		<&gpi_dma0 1 2 1 64 0>;
+		dma-names = "tx", "rx";
+		status = "disabled";
+	};
+
+	devinfo {
+		status = "disabled";
+	};
+	devinfo_golf {
+		compatible = "oppo-devinfo";
+
+		pinctrl-names = "default", "sleep", "active", "idle";
+		pinctrl-0 = <&hw_pins_default &gpio53_default &gpio94_default &gpio95_default>;
+		pinctrl-1 = <&aboard_pin_gpio0_sleep>;
+		pinctrl-2 = <&aboard_pin_gpio0_active>;
+		pinctrl-3 = <&aboard_pin_gpio0_idle>;
+		main-sub {
+			use_tristate_gpio;
+			compatible = "hw-match, main-sub";
+			aboard-gpio0 = <&pm6125_gpios 2 0>;
+			aboard-patterns = <0 1 1 1>;	/*0[high-resistance] 1[pull-down] 2[pull-up]*/
+			/*main board*/
+			match-projects = <21091 21261 21262 21263>;
+		};
+	};
+	/delete-node/ oplus_fp_common;
+	oplus_fp_common {
+		compatible = "oplus,fp_common";
+		oplus,fp_gpio_num = <1>;
+		oplus,fp_gpio_0 = <&tlmm 67 0x0>;
+		pinctrl-names = "gpio_id0_up", "gpio_id0_down";
+		pinctrl-0 = <&gpio_id0_up>;
+		pinctrl-1 = <&gpio_id0_down>;
+		oplus,one_gpio_for_three_ic = <1>;
+		/delete-node/ jiiov_0302;
+		/delete-node/ goodix_optical_G3S;
+        silead_6159 {
+            oplus,fp-id = <0>; /* fp id mapping table */
+            vendor-chip = <29>; /* please refer to the struct fp_vendor_t in oppo_fp_commmon.n */
+            eng-menu = "-1, -1"; /* represents SNR, inclination test item in engineer menu, and 0/1 means off/on */
+            chip-name = "S_gsl6159"; /* /proc/fp_id, will be displayed in engineer menu  */
+        };
+        silead_6159_bak {
+            oplus,fp-id = <1>; /* fp id mapping table */
+            vendor-chip = <29>; /* please refer to the struct fp_vendor_t in oppo_fp_commmon.n */
+            eng-menu = "-1, -1"; /* represents SNR, inclination test item in engineer menu, and 0/1 means off/on */
+            chip-name = "S_gsl6159"; /* /proc/fp_id, will be displayed in engineer menu  */
+        };
+	goodix_optical_G3S {
+	    /delete-property/ oplus,fp-id;
+	    oplus,fp-id = <3>; /* fp id mapping table */
+	};
+	jiiov_0302 {
+	    /delete-property/ oplus,fp-id;
+            oplus,fp-id = <2>; /* fp id mapping table */
+        };
+	};
+    silead_fp {
+        status = "ok";
+        compatible = "sil,fingerprint";
+        interrupt-parent = <&tlmm>;
+        interrupts = <97 0x0>;
+        irq-gpios = <&tlmm 97 0x1>;
+        rst-gpios = <&tlmm 104 0x0>;
+        avdd-gpios = <&tlmm 101 0x0>;
+        spi-max-frequency = <4800000>;
+        qcom,qup-id = <6>;
+        sld,enable-via-gpio;
+        pinctrl-names = "default", "sld_reset_reset", "sld_reset_active", "sld_irq_active";
+        pinctrl-0 = <&gpio_sld_irq_default>, <&gpio_sld_power_default>, <&gpio_sld_reset_default>;
+        pinctrl-1 = <&sld_msm_gpio_104>;
+        pinctrl-2 = <&sld_msm_gpio_104_output_high>;
+        pinctrl-3 = <&sld_msm_gpio_97>;
+    };
+};
+
+&pm6125_gpios {
+	aboard_pin {
+		hw_pins_default:hw_pins_default {
+		};
+
+		aboard_pin_gpio0_sleep:aboard_pin_gpio0_sleep {
+		pins = "gpio2";
+			function = "normal";
+			bias-pull-down;
+			input-enable;
+			power-source = <0>;
+		};
+
+		aboard_pin_gpio0_active:aboard_pin_gpio0_active {
+		pins = "gpio2";
+			function = "normal";
+			bias-pull-up;
+			input-enable;
+			power-source = <0>;
+		};
+
+		aboard_pin_gpio0_idle:aboard_pin_gpio0_idle {
+		pins = "gpio2";
+			function = "normal";
+			bias-disable;
+			input-enable;
+			power-source = <0>;
+		};
+	};
+};
+
+&tlmm {
+
+	pmx_gpio_default {
+		gpio53_default: gpio53_default {
+			mux {
+				pins = "gpio53";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio53";
+				input-enable;
+				bias-disable;
+			};
+		};
+
+		gpio94_default: gpio94_default {
+			mux {
+				pins = "gpio94";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio94";
+				input-enable;
+				bias-disable;
+			};
+		};
+
+		gpio95_default: gpio95_default {
+			mux {
+				pins = "gpio95";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio95";
+				input-enable;
+				bias-disable;
+			};
+		};
+	};
+	/delete-node/ qupv3_se2_i2c_pins;
+	qupv3_se2_spi_pins: qupv3_se2_spi_pins {
+		qupv3_se2_spi_active: qupv3_se2_spi_active {
+			mux {
+				pins = "gpio7", "gpio71";
+				function = "qup2";
+			};
+
+			config {
+				pins = "gpio7", "gpio71";
+				drive-strength = <8>;
+				bias-pull-down;
+			};
+		};
+
+		qupv3_se2_spi_sleep: qupv3_se2_spi_sleep {
+			mux {
+				pins = "gpio7", "gpio71";
+				function = "qup2";
+			};
+
+			config {
+				pins = "gpio7", "gpio71";
+				drive-strength = <8>;
+				bias-pull-down;
+			};
+		};
+	};
+
+	qupv3_se2_spi_cs_pin: qupv3_se2_spi_cs_pin {
+		qupv3_se2_spi_cs_active: qupv3_se2_spi_cs_active {
+			mux {
+				pins = "gpio80";
+				function = "qup2";
+			};
+
+			config {
+				pins = "gpio80";
+				drive-strength = <8>;
+				output-high;
+				bias-pull-up;
+			};
+		};
+
+		qupv3_se2_spi_cs_sleep: qupv3_se2_spi_cs_sleep {
+			mux {
+				pins = "gpio80";
+				function = "qup2";
+			};
+
+			config {
+				pins = "gpio80";
+				drive-strength = <8>;
+				output-high;
+				bias-pull-up;
+			};
+		};
+	};
+
+	qupv3_se2_spi_miso_pin: qupv3_se2_spi_miso_pin {
+		qupv3_se2_spi_miso_active: qupv3_se2_spi_miso_active {
+			mux {
+				pins = "gpio6";
+				function = "qup2";
+			};
+
+			config {
+				pins = "gpio6";
+				drive-strength = <8>;
+				bias-pull-down;
+			};
+		};
+
+		qupv3_se2_spi_miso_sleep: qupv3_se2_spi_miso_sleep {
+			mux {
+				pins = "gpio6";
+				function = "qup2";
+			};
+
+			configs {
+				pins = "gpio6";
+				drive-strength = <8>;
+				bias-pull-down;
+			};
+		};
+	};
+
+	pmx_ts_int_active {
+		ts_int_active: ts_int_active {
+			mux {
+				pins = "gpio99";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio99";
+				drive-strength = <8>;
+				bias-pull-up;
+			};
+		};
+	};
+
+	pmx_ts_int_suspend {
+		ts_int_suspend: ts_int_suspend {
+			mux {
+				pins = "gpio99";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio99";
+				drive-strength = <2>;
+				bias-pull-up;
+			};
+		};
+	};
+
+	pmx_ts_reset_active {
+		ts_reset_active: ts_reset_active {
+			mux {
+				pins = "gpio98";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio98";
+				drive-strength = <8>;
+				bias-pull-up;
+			};
+		};
+	};
+
+	oplus_fp_common{
+		gpio_id1_default: gpio_id1_default {
+			mux {
+				pins = "gpio3";
+				function = "gpio";
+			};
+			config {
+				pins = "gpio3";
+				drive-strength = <2>;
+				bias-pull-up;
+				input-enable;
+			};
+		};
+		gpio_id0_up: gpio_id0_up {
+			mux {
+				pins = "gpio67";
+				function = "gpio";
+			};
+			config {
+				pins = "gpio67";
+				drive-strength = <2>;
+				bias-pull-up;
+				input-enable;
+			};
+		};
+		gpio_id0_down: gpio_id0_down {
+			mux {
+				pins = "gpio67";
+				function = "gpio";
+			};
+			config {
+				pins = "gpio67";
+				drive-strength = <2>;
+				bias-pull-down;
+				input-enable;
+			};
+		};
+	};
+    silead_fp{
+	    gpio_sld_irq_default: gpio_sld_irq_default {
+	        mux {
+	            pins = "gpio97";
+	            function = "gpio";
+	        };
+	        config {
+	            pins = "gpio97";
+	            drive-strength = <2>;
+	            bias-pull-down;
+	            input-enable;
+	        };
+	    };
+	    gpio_sld_power_default: gpio_sld_power_default {
+	        mux {
+	            pins = "gpio101";
+	            function = "gpio";
+	        };
+	        config {
+	            pins = "gpio101";
+	            drive-strength = <2>;
+	            bias-disable;
+	            output-low;
+	        };
+	    };
+	    gpio_sld_reset_default: gpio_sld_reset_default {
+	        mux {
+	            pins = "gpio104";
+	            function = "gpio";
+	        };
+	        config {
+	            pins = "gpio104";
+	            drive-strength = <2>;
+	            bias-disable;
+	            output-low;
+	        };
+	    };
+        sld_msm_gpio_104: sld_msm_gpio_104 {
+            mux {
+                pins = "gpio104";
+                function = "gpio";
+            };
+
+            config {
+                pins = "gpio104";
+                drive-strength = <2>;
+                bias-disable;
+                output-low;
+            };
+        };
+
+        // GPIO_104 : FP_RESET_N, state device active
+        sld_msm_gpio_104_output_high: sld_msm_gpio_104_output_high {
+            mux {
+                pins = "gpio104";
+                function = "gpio";
+            };
+
+            config {
+                pins = "gpio104";
+                drive-strength = <2>;
+                bias-disable;
+                output-high;
+            };
+        };
+
+        // GPIO_97 : FP_INT_N
+        sld_msm_gpio_97: sld_msm_gpio_97 {
+            mux {
+                pins = "gpio97";
+                function = "gpio";
+            };
+
+            config {
+                pins = "gpio97";
+                drive-strength = <2>;
+                bias-pull-down;
+            };
+        };
+	};
+
+	pmx_ts_reset_suspend {
+		ts_reset_suspend: ts_reset_suspend {
+			mux {
+				pins = "gpio98";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio98";
+				drive-strength = <2>;
+				bias-pull-down;
+			};
+		};
+	};
+};
+
+&qupv3_se2_i2c {
+    status = "disabled";
+};
+
+&qupv3_se2_spi {
+	/* Himax device tree node */
+	status = "ok";
+	ilitek2_spi@2 {
+		compatible = "ilitek,ili9882n";
+		reg = <2>;
+		chip-name = "NF_ILI9883A";
+		status = "ok";
+
+		spi-max-frequency = <12000000>;    //4800000,9600000,15000000,19200000
+		reset-gpio = <&tlmm 98 0x00>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <99 0x0>;
+		irq-gpio = <&tlmm 99 0x2002>;
+
+		touchpanel,irq_need_dev_resume_time = <500>;
+		touchpanel,max-num-support = <10>;
+		touchpanel,tx-rx-num = <18 32>;
+		touchpanel,panel-coords = <720 1612>;
+		touchpanel,display-coords = <720 1612>;
+		touchpanel,touchmajor-limit = <0 54>;
+
+		platform_support_project = <21261 21262 21263>;
+		platform_support_project_dir = <21261 21261 21261>;
+		platform_support_project_commandline = "default_commandline", "default_commandline", "default_commandline";
+		platform_support_project_external_name = "AA256", "AA256", "AA256";
+		pinctrl-names = "default", "suspend";
+		pinctrl-0 = <&ts_int_active &ts_reset_active>;
+		pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
+
+		tp_type = <3>;//BOE
+
+		incell_screen;
+		irq_need_dev_resume_ok;
+		fw_edge_limit_support;
+		black_gesture_support;
+		charger_pump_support;
+		headset_pump_support;
+		esd_handle_support;
+		//spurious_fingerprint_support;
+		//lcd_trigger_fp_check;
+		black_gesture_test_support;
+		noflash_support;
+		smart_gesture_support;
+		pressure_report_support;
+		fw_update_app_support;
+		game_switch_support;
+		drlimit_remove_support;
+		lcd_trigger_load_tp_fw_support;
+		suspend_gesture_cfg;
+		fw_update_in_probe_with_headfile;
+		health_monitor_v2_support;
+
+		touchpanel,button-type = <4>;
+	};
+};
+//#ifdef OPLUS_TEMP_NTC
+&thermal_zones {
+	cpu-therm-usr {
+		polling-delay-passive = <0>;
+		polling-delay = <0>;
+		thermal-governor = "user_space";
+		wake-capable-sensor;
+		trips {
+			active-config0 {
+				temperature = <125000>;
+				hysteresis = <1000>;
+				type = "passive";
+			};
+		};
+	};
+
+	quiet-therm-usr {
+		/delete-property/ thermal-sensors;
+	};
+
+	quiet-therm-step {
+		/delete-property/ thermal-sensors;
+	};
+
+	camera-therm-usr {
+		/delete-property/ thermal-sensors;
+	};
+
+	chg-skin-therm-usr {
+		/delete-property/ thermal-sensors;
+	};
+};
+//#endif

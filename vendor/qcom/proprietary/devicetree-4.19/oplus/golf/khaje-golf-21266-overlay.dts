@@ -1,0 +1,14 @@
+/dts-v1/;
+/plugin/;
+
+#include "../../qcom/khaje-qrd-nopmi-overlay.dts"
+#include "golf-charger.dtsi"
+#include "khaje_overlay_common.dtsi"
+#include "khaje_21266_overlay_common.dtsi"
+
+#include "audio/khaje-golf-audio-mono-overlay.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. KHAJE QRD nopmi overlay, golf";
+    oplus,dtsi_no = <21266>;
+};

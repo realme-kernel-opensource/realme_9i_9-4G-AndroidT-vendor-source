@@ -1,0 +1,2 @@
+#include "nfc/coco-nfc-pn553.dtsi"
+#include "sensor/cocob-sensor-qrd.dtsi"

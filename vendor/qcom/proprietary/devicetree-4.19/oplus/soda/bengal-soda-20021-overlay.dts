@@ -1,0 +1,15 @@
+/dts-v1/;
+/plugin/;
+
+#include "../../qcom/bengal-pmi632.dtsi"
+#include "bengal-soda-overlay.dtsi"
+#include "bengal-soda-20021-overlay.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Bengal QRD";
+	compatible = "qcom,bengal-qrd", "qcom,bengal", "qcom,qrd";
+	qcom,board-id = <0x1000B 0>;
+	oplus,dtsi_no = <20021>;
+};
+
+#include "sensor/soda-20021-sensor-mtp.dtsi"

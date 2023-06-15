@@ -1,0 +1,24 @@
+#include "dsi-panel-nt36672c-90hz-tianma-video.dtsi"
+#include "nfc/kasa-nfc-pn557.dtsi"
+#include "sensor/kasa-216C3-sensor-mtp.dtsi"
+
+&soc {
+	//#ifdef FEATURE_OPPO_NV_BACKUP
+	//add for creating a shared memory with uio for nv backup and restore
+	qcom,oembackup_sharedmem@0 {
+		compatible = "qcom,sharedmem-uio";
+		reg = <0x0 0x00100000>;
+		reg-names = "oembackup";
+		qcom,client-id = <0x00000004>;
+		qcom,guard-memory;
+		qcom,vm-nav-path;
+	};
+	//#endif /* FEATURE_OPPO_NV_BACKUP */
+};
+
+//#ifdef OPLUS_BUG_STABILITY
+&sde_dsi {
+	/delete-property/ qcom,dsi-default-panel;
+	qcom,dsi-default-panel = <&dsi_nt36672c_120hz_tianma_video>;
+};
+//endif /* OPLUS_BUG_STABILITY */

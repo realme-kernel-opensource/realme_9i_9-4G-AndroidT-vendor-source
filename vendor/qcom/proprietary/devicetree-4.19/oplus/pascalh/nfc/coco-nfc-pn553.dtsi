@@ -1,0 +1,42 @@
+/**********************************************************************************
+* Copyright (c)  2008-2020  Guangdong oplus Mobile Comm Corp., Ltd
+* Description: oplus pn553 nfc dtsi
+*
+* Version: 1.0
+* Date: 2020-11-20
+* Author: Junbin.Lin
+*
+* ------------------------------ Revision History: --------------------------------
+* <version>           <date>                <author>                            <desc>
+* Revision 1.0       2020-11-20            junbin.lin           Created for Beta pn553 nfc dtsi
+***********************************************************************************/
+&soc {
+	//add for nfc_chipset
+	nfc_chipset {
+		compatible = "oplus-nfc-chipset";
+		chipset-20675 = "NQ310";
+	};
+};
+
+&qupv3_se1_i2c {
+    //add for NXP PN553 NFC GPIO
+	status = "ok";
+	#address-cells = <1>;
+	#size-cells = <0>;
+	nq@29 {
+		compatible = "nxp,pn544";
+		reg = <0x29>;
+		nxp,pn544-irq = <&tlmm 70 0x00>;
+		nxp,pn544-ven = <&tlmm 69 0x00>;
+		nxp,pn544-fw-dwnld = <&tlmm 31 0x00>;
+		qcom,nq-clkreq = <&tlmm 86 0x00>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <70 0>;
+		interrupt-names = "nfc_irq";
+		pinctrl-names = "nfc_active", "nfc_suspend";
+		pinctrl-0 = <&nfc_int_active &nfc_enable_active
+				&nfc_clk_req_active>;
+		pinctrl-1 = <&nfc_int_suspend &nfc_enable_suspend
+				&nfc_clk_req_suspend>;
+	};
+};

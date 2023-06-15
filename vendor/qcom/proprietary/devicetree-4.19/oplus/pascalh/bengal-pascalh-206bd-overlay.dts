@@ -1,0 +1,13 @@
+/dts-v1/;
+/plugin/;
+
+#include "../../qcom/bengal-pmi632.dtsi"
+#include "bengal-pascalh-overlay.dtsi"
+#include "bengal-pascalh-206bd-overlay.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Bengal QRD";
+	compatible = "qcom,bengal-qrd", "qcom,bengal", "qcom,qrd";
+	qcom,board-id = <0x1000B 0>;
+	oplus,dtsi_no = <132797>;
+};

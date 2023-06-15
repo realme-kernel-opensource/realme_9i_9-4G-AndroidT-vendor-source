@@ -1,0 +1,2 @@
+#include "sensor/beta-sensor-mtp.dtsi"
+#include "oplus-charge.dtsi"

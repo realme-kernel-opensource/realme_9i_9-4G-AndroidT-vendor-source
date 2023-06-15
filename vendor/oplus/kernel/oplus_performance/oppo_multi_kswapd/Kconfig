@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: GPL-2.0-only
+# Copyright (C) 2018-2020 Oplus. All rights reserved.
+
+config OPPO_MULTI_KSWAPD
+       bool "Enable oppo multi kswapd"
+       default n
+       help
+         oppo multi kswapd

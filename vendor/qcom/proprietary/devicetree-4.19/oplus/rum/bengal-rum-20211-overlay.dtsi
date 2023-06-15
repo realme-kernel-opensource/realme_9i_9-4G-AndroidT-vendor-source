@@ -1,0 +1,83 @@
+#include "oplus-charge-20211.dtsi"
+&pmi632_qg {
+	status = "disabled";
+};
+&bcl_sensor {
+	status = "disabled";
+};
+&bcl_soc {
+	status = "disabled";
+};
+
+&thermal_zones {
+	pmi632-ibat-lvl0 {
+		status = "disabled";
+	};
+	pmi632-ibat-lvl1 {
+		status = "disabled";
+	};
+	pmi632-vbat-lvl0 {
+		status = "disabled";
+	};
+	pmi632-vbat-lvl1 {
+		status = "disabled";
+	};
+	pmi632-vbat-lvl2 {
+		status = "disabled";
+	};
+	pmi632-bcl-lvl0 {
+		status = "disabled";
+	};
+	pmi632-bcl-lvl1 {
+		status = "disabled";
+	};
+	pmi632-bcl-lvl2 {
+		status = "disabled";
+	};
+	soc {
+		status = "disabled";
+	};
+};
+
+&usb0 {
+	dwc3@4e00000 {
+		maximum-speed = "high-speed";
+	};
+};
+
+&qupv3_se0_i2c {
+		pinctrl-names = "default", "sleep", "pulldown", "pullup";
+		pinctrl-0 = <&qupv3_se0_i2c_active>;
+		pinctrl-1 = <&qupv3_se0_i2c_sleep>;
+		pinctrl-2 = <&qupv3_se0_i2c_down>;
+		pinctrl-3 = <&qupv3_se0_i2c_up>;
+		qcom,wrapper-core = <&qupv3_0>;
+};
+&tlmm {
+	qupv3_se0_i2c_down: qupv3_se0_i2c_down {
+		mux {
+			pins = "gpio0", "gpio1";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio0", "gpio1";
+			drive-strength = <2>;
+			bias-pull-down;
+			output-low;
+		};
+	};
+	qupv3_se0_i2c_up: qupv3_se0_i2c_up {
+		mux {
+			pins = "gpio0", "gpio1";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio0", "gpio1";
+			drive-strength = <2>;
+			bias-pull-up;
+			input-enable;
+		};
+	};
+};

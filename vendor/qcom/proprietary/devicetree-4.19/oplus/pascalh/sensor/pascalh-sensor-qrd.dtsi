@@ -1,0 +1,112 @@
+#include <dt-bindings/clock/qcom,gcc-bengal.h>
+
+&soc {
+	oplus_sensor {
+			compatible = "oplus,sensor-devinfo";
+			als-row-coe = <110>;
+			/*enum {LSM6DSM = 0x01, BMI160 = 0x02, LSM6DS3 = 0x04, BMI260 = 0x08};*/
+		  /*gsensor@0 {
+					sensor-name = <0x04>;//LSM6DS3
+					sensor-direction = <3>;
+					sensor-index = <0>;//source num
+					sensor-type = <0>;//OPPO_ACCEL
+			};
+			gsensor@1 {
+					sensor-name = <0x02>;//BMI160
+					sensor-direction = <4>;
+					sensor-index = <1>;//source num
+					sensor-type = <0>;//OPPO_ACCEL
+			};*/
+			/* enum {AKM0991X = 0x01, MMC5603 = 0x02, MXG4300 = 0x04};*/
+			msensor@0 {
+					sensor-name = <0x02>;//MMC5603
+					sensor-direction = <0>;
+					sensor-index = <0>;
+					sensor-type = <2>;//OPPO_MAG
+					parameter-number= <18>;
+					soft-mag-parameter = <9988 0 369 1 63 0 178 1 9926 0 26 1 283 1 182 1 10307 0>;//e00 sign e01 sign...
+			};
+			msensor@1 {
+					sensor-name = <0x01>;//AKM09918
+					sensor-direction = <1>;
+					sensor-index = <1>;
+					sensor-type = <2>;//OPLUS_MAG
+					parameter-number= <18>;
+					soft-mag-parameter = <10057 0 307 1 70 1 145 1 10335 0 27 0 59 1 20 0 10108 0>;//e00 sign e01 sign...
+			};
+			/*enum {STK3A5X=0x01,TCS3701=0x02,TCS3408=0x04,STK326X=0x08,MN78911=0x10};*/
+			lsensor@0 {
+					sensor-name = <0x01>;//STK3A5X
+					sensor-index = <1>;
+					sensor-type = <3>;//OPLUS_ALS
+					bus-number = <1>;
+					irq-number = <35>;
+					als-type = <1>;//UNDER_LCD
+					is-unit-device = <1>;
+					is-als-dri = <1>;
+					als-factor = <110>;
+					is_als_initialed = <0>;
+					als_buffer_length = <8>;
+			};
+			psensor@0 {
+					sensor-name = <0x01>;//STK3A5X
+					sensor-index = <1>;
+					sensor-type = <4>;//OPLUS_PROXIMITY
+					bus-number = <1>;
+					irq-number = <35>;
+					ps-cail-type = <1>;
+					ps-type = <1>;
+					is_ps_initialzed = <0>;
+					low_step = <300>;
+					high_step = <400>;
+					low_limit = <650>;
+					high_limit = <1050>;
+					dirty_low_step = <300>;
+					dirty_high_step = <400>;
+					ps_adjust_min = <27>;
+					ps_adjust_max = <1850>;
+					ps_ir_limit = <2000>;
+					sampling_count = <5>;
+					ps_dirty_limit = <1800>;
+					step_max = <400>;
+					step_min = <20>;
+					step_div = <2000>;
+					anti_shake_delta = <70>;
+					dynamic_cali_max = <6000>;
+					raw2offset_radio = <1000>;
+					offset_max = <60000>;
+					offset_range_min = <0>;
+					offset_range_max = <65535>;
+					force_cali_limit = <2000>;
+					cali_jitter_limit = <20>;
+			};
+			/*virtual sensor
+			enum sensor_algo_id {
+					OPPO_PICKUP_DETECT,
+					OPPO_LUX_AOD,
+					OPPO_TP_GESTURE,
+					OPPO_FP_DISPLAY,
+					OPPO_FREE_FALL,
+					OPPO_CAMERA_PROTECT,
+					SENSOR_ALGO_NUM
+			}*/
+			pickup_detect {
+					sensor-type = <0>; //OPPO_PICKUP_DETECT
+					is-virtual-sensor;
+					is-need-prox = <1>;
+					prox-type = <0>; // 0 - proximity; 1 - proximity_fake
+			};
+			lux_aod {
+					sensor-type = <1>; //OPPO_LUX_AOD
+					is-virtual-sensor;
+					thrd-low = <12>;
+					thrd-high = <50>;
+					als-type = <1>; // 0 - wise_light; 1 - ambient_light
+			};
+			fp_display {
+					sensor-type = <3>; //OPPO_FP_DISPLAY
+					is-virtual-sensor;
+					prox-type = <0>; // 0 - proximity; 1 - proximity_fake
+			};
+	};
+};

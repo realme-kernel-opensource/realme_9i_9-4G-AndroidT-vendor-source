@@ -1,0 +1,7 @@
+#include "oplus-charge-20214.dtsi"
+&pmi632_qg {
+	qcom,shutdown_soc_threshold = <50>;
+	qcom,qg-iterm-ma = <450>;
+	qcom,s3-entry-ibat-ua = <20000>;
+	qcom,project-index = <1>; // soda = 0; rum = 1
+};

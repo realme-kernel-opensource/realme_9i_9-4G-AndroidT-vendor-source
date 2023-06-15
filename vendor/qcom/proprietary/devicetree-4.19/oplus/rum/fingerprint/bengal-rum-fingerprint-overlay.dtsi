@@ -1,0 +1,135 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (C) 2018-2020 Oplus. All rights reserved.
+ */
+&soc {
+	oplus_fp_common {
+		compatible = "oplus,fp_common";
+		oplus,fp_gpio = <1234>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&gpio_id2_default>;
+		goodix_optical_G3 {
+			oplus,fp-id = <1>; /* fp id mapping table */
+			vendor-chip = <11>; /* please refer to the struct fp_vendor_t in oppo_fp_commmon.n */
+			eng-menu = "-1,-1"; /* represents SNR, inclination test item in engineer menu, and 0/1 means off/on */
+			chip-name = "G_OPTICAL_G3";  /* /proc/fp_id, will be displayed in engineer menu  */
+		};
+	};
+	goodix_fp {
+		status = "ok";
+		compatible = "goodix,goodix_fp";
+        	spi-max-frequency = <1000000>;
+		input-device-name = "gf3636";
+		interrupt-parent = <&tlmm>;
+		interrupts = <97 0>;
+		goodix,gpio_irq = <&tlmm 97 0x0>;
+		gpio-power = <&tlmm 101 0x0>;
+		gpio-lpwr = <&tlmm 51 0x0>;
+		goodix,gpio_reset = <&tlmm 104 0x0>;
+		pinctrl-names = "fp_power_enable", "fp_power_disable",
+                        "fp_1P8_power_enable", "fp_1P8_power_disable",
+                		"fp_reset_enable", "fp_reset_disable";
+				pinctrl-0 = <&fp_power_enable_active >;
+		pinctrl-1 = <&fp_power_disable_active >;
+		pinctrl-2 = <&fp_1P8_power_enable_active >;
+		pinctrl-3 = <&fp_1P8_power_disable_active >;
+	        pinctrl-4 = <&fp_reset_enable_active >;
+        	pinctrl-5 = <&fp_reset_disable_active >;
+
+		notify_tpinfo_flag = <1>;
+		power-num = <1>;
+		power_source_1 {
+			power-mode = <2>;
+			power-name = "gpio-power";
+			delay-time = <0>;
+		};
+	};
+};
+
+&tlmm {
+	//#ifdef OPLUS_FEATURE_FINGERPRINT
+	oplus_fp_common{
+		gpio_id2_default: gpio_id2_default {
+			mux {
+				pins = "gpio67";
+				function = "gpio";
+			};
+			config {
+				pins = "gpio67";
+				drive-strength = <2>;
+				bias-pull-up;
+				input-enable;
+			};
+		};
+	};
+
+	goodix_fp{
+		fp_power_enable_active: fp_power_enable_active {
+			mux {
+				pins = "gpio101";
+				function = "gpio";
+			};
+			config {
+				pins = "gpio101";
+				drive-strength = <2>;
+				bias-pull-up;
+			};
+		};
+		fp_power_disable_active: fp_power_disable_active {
+			mux {
+				pins = "gpio101";
+				function = "gpio";
+			};
+			config {
+				pins = "gpio101";
+				drive-strength = <2>;
+				bias-pull-down;
+			};
+		};
+		fp_1P8_power_enable_active: fp_1P8_power_enable_active {
+			mux {
+				pins = "gpio51";
+				function = "gpio";
+			};
+			config {
+				pins = "gpio51";
+				drive-strength = <2>;
+				bias-pull-up;
+			};
+		};
+		fp_1P8_power_disable_active: fp_1P8_power_disable_active {
+			mux {
+				pins = "gpio51";
+				function = "gpio";
+			};
+			config {
+				pins = "gpio51";
+				drive-strength = <2>;
+				bias-pull-down;
+			};
+		};
+		fp_reset_enable_active: fp_reset_enable_active {
+			mux {
+				pins = "gpio104";
+				function = "gpio";
+			};
+			config {
+				pins = "gpio104";
+				drive-strength = <2>;
+				bias-pull-up;
+			};
+		};
+
+		fp_reset_disable_active: fp_reset_disable_active {
+			mux {
+				pins = "gpio104";
+				function = "gpio";
+			};
+				config {
+				pins = "gpio104";
+				drive-strength = <2>;
+				bias-pull-down;
+			};
+		};
+	};
+};

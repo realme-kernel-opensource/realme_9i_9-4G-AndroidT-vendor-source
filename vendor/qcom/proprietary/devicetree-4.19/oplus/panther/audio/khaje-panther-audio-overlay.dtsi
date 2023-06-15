@@ -1,0 +1,115 @@
+&q6core {
+	cdc_pri_mi2s_gpios: msm_cdc_pinctrl_pri {
+		compatible = "qcom,msm-cdc-pinctrl";
+			pinctrl-names = "aud_active", "aud_sleep";
+			pinctrl-0 = <&lpi_i2s1_sck_sleep &lpi_i2s1_ws_sleep
+					&lpi_i2s1_sd0_sleep &lpi_i2s1_sd1_sleep>;
+			pinctrl-1 = <&lpi_i2s1_sck_active &lpi_i2s1_ws_active
+					&lpi_i2s1_sd0_active &lpi_i2s1_sd1_active>;
+			qcom,lpi-gpios;
+			#gpio-cells = <0>;
+	};
+
+	cdc_dmic01_pinctrl {
+		status = "disabled";
+	};
+
+	cdc_dmic23_pinctrl {
+		status = "disabled";
+	};
+
+	wsa_clk {
+		status = "disabled";
+	};
+};
+
+&bengal_snd {
+	/delete-property/ qcom,wsa-max-devs;
+	/delete-property/ qcom,wsa-devs;
+	qcom,wsa-max-devs = <0>;
+	qcom,wsa-devs = <0>;
+
+	/delete-property/ qcom,mi2s-audio-intf;
+	qcom,mi2s-audio-intf = <1>;
+
+	qcom,pri-mi2s-gpios = <&cdc_pri_mi2s_gpios>;
+
+	/delete-property/ qcom,cdc-dmic01-gpios;
+	/delete-property/ qcom,cdc-dmic23-gpios;
+
+	qcom,msm-mbhc-hs-mic-max-threshold-mv = <2600>;
+	qcom,msm-mbhc-hs-mic-min-threshold-mv = <75>;
+
+	oplus,mbhc-headset-micbias-alwayon = <1>;
+
+	qcom,afe-rxtx-lb = <1>;
+};
+
+&qupv3_se1_i2c {
+	aw882xx@34 {
+		compatible = "awinic,aw882xx_smartpa";
+		reg = <0x34>;
+		reset-gpio = <&tlmm 84 0>;
+		pinctrl-names = "aw_pinctrl_active", "aw_pinctrl_suspend";
+		pinctrl-0 = <&aw_spk_reset_on>;
+		pinctrl-1 = <&aw_spk_reset_off>;
+
+		dc-flag = <0>;
+		sync-flag = <0>;
+		sound-channel = <0>;
+		aw-tx-topo-id = <0x1000ff00>;
+		aw-rx-topo-id = <0x1000ff01>;
+		aw-tx-port-id = <0x1001>;
+		aw-rx-port-id = <0x1000>;
+		aw-re-min = <4000>;
+		aw-re-max = <30000>;
+
+		aw-cali-mode = "aw_cali_all";
+
+		status = "okay";
+	};
+};
+
+&tlmm {
+	pmx_aw_spk_rst_active {
+		aw_spk_reset_on: aw_spk_reset_on {
+			mux {
+				pins = "gpio84";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio84";
+				drive-strength = <8>;
+				bias-pull-up;
+			};
+		};
+
+		aw_spk_reset_off: aw_spk_reset_off {
+			mux {
+				pins = "gpio84";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio84";
+				drive-strength = <2>;
+				bias-pull-down;
+			};
+		};
+	};
+};
+
+&dai_mi2s0 {
+	compatible = "qcom,msm-dai-q6-mi2s";
+	qcom,msm-dai-q6-mi2s-dev-id = <0>;
+	qcom,msm-mi2s-rx-lines = <1>;
+	qcom,msm-mi2s-tx-lines = <2>;
+};
+
+&adsp_mem {
+	compatible = "removed-dma-pool";
+	size = <0 0xC00000>;
+	no-map;
+	/delete-property/ reusable;
+};

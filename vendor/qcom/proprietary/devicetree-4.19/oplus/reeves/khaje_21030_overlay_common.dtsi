@@ -1,0 +1,23 @@
+#include "audio/khaje-reeves-audio-overlay.dtsi"
+&soc {
+	//#ifdef FEATURE_OPPO_NV_BACKUP
+	//add for creating a shared memory with uio for nv backup and restore
+	qcom,oembackup_sharedmem@0 {
+		compatible = "qcom,sharedmem-uio";
+		reg = <0x0 0x00100000>;
+		reg-names = "oembackup";
+		qcom,client-id = <0x00000004>;
+		qcom,guard-memory;
+		qcom,vm-nav-path;
+	};
+	//#endif /* FEATURE_OPPO_NV_BACKUP */
+	tdm_pri_rx: qcom,msm-dai-tdm-pri-rx {
+		qcom,msm-cpudai-tdm-lane-mask =  /bits/ 16 <1>;
+		qcom,msm-cpudai-tdm-sync-mode = <0>;
+	};
+
+	tdm_pri_tx: qcom,msm-dai-tdm-pri-tx {
+		qcom,msm-cpudai-tdm-lane-mask =  /bits/ 16 <2>;
+		qcom,msm-cpudai-tdm-sync-mode = <0>;
+	};
+};

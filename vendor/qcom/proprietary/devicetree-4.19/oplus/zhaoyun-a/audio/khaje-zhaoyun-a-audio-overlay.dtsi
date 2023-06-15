@@ -1,0 +1,212 @@
+//bengal-qrd.dtsi
+&soc {
+	//#ifdef OPLUS_ARCH_EXTENDS
+	sia81xx_L: sia81xx@L {
+			compatible = "si,sia81xx";
+			si,sia81xx_type = "sia8152";
+			si,sia81xx_reset = <&tlmm 84 0x00>;
+			si,sia81xx_owi = <&tlmm 84 0x00>;
+			pinctrl-names = "sia81xx_gpio";
+			pinctrl-0 = <&aw_spk_reset_on>;
+
+			si,sia81xx_disable_pin = <1>;
+
+			/* the same value share a same task
+			 * valid value range : 0 ~ 7 */
+			timer_task_hdl = <0>;
+
+			channel_num = <0>;
+			owi_mode = <6>;
+			en_x_filter = <1>;
+			en_dynamic_updata_vdd = <1>;
+			dynamic_updata_vdd_port = <0xb030>;
+			algo_is_v2 = <1>;
+	};
+
+	sia81xx_R: sia81xx@R {
+			compatible = "si,sia81xx";
+			si,sia81xx_type = "sia8152";
+			si,sia81xx_reset = <&tlmm 111 0x00>;
+			si,sia81xx_owi = <&tlmm 111 0x00>;
+			pinctrl-names = "sia81xx_gpio";
+			pinctrl-0 = <&aw_rcv_reset_on>;
+
+			si,sia81xx_disable_pin = <1>;
+
+			/* the same value share a same task
+			 * valid value range : 0 ~ 7 */
+			timer_task_hdl = <0>;
+
+			channel_num = <1>;
+			owi_mode = <6>;
+			en_x_filter = <0>;
+			en_dynamic_updata_vdd = <1>;
+			dynamic_updata_vdd_port = <0xb030>;
+			algo_is_v2 = <1>;
+	};
+	//#endif /* OPLUS_ARCH_EXTENDS */
+};
+
+&tlmm {
+
+	pmx_aw_spk_rst_active {
+		aw_spk_reset_on: aw_spk_reset_on {
+			mux {
+				pins = "gpio84";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio84";
+				drive-strength = <8>;
+				bias-pull-up;
+				output-high;
+			};
+		};
+
+		aw_spk_reset_off: aw_spk_reset_off {
+			mux {
+				pins = "gpio84";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio84";
+				drive-strength = <2>;
+				bias-pull-down;
+				output-low;
+			};
+		};
+	};
+
+	pmx_aw_rcv_rst_active {
+		aw_rcv_reset_on: aw_rcv_reset_on {
+			mux {
+				pins = "gpio111";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio111";
+				drive-strength = <8>;
+				bias-pull-up;
+				output-high;
+			};
+		};
+
+		aw_rcv_reset_off: aw_rcv_reset_off {
+			mux {
+				pins = "gpio111";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio111";
+				drive-strength = <2>;
+				bias-pull-down;
+				output-low;
+			};
+		};
+	};
+};
+
+&bengal_snd {
+	/delete-property/ qcom,wsa-max-devs;
+	/delete-property/ qcom,wsa-devs;
+	qcom,wsa-max-devs = <0>;
+	qcom,wsa-devs = <0>;
+
+	/delete-property/ qcom,afe-rxtx-lb;
+	qcom,afe-rxtx-lb = <1>;
+
+	qcom,msm-mbhc-hs-mic-max-threshold-mv = <2600>;
+	qcom,msm-mbhc-hs-mic-min-threshold-mv = <75>;
+
+	si,sia81xx-max-num = <2>;
+	si,sia81xx-aux-devs = <&sia81xx_L>, <&sia81xx_R>;
+	si,sia81xx-aux-devs-prefix = "SpkrMonoL", "SpkrMonoR";
+
+	oplus,mbhc-headset-micbias-alwayon = <1>;
+};
+
+&qupv3_se1_i2c {
+
+	aw87xxx_pa_58@5B {
+		compatible = "awinic,aw87xxx_pa_58";
+		reg = <0x5B>;
+		oplus-real-addr = <0x58>;
+
+		pa-channel = < 0 >;
+		/* actflag-gain-array: off music voice fm rcv */
+		actflag-gain-array = < 0x00 0x08 0x08 0x08 0x00 >;
+		/*actflag-auto-run;*/
+		gain-reg-addr = <0x06>;
+		monitor-flag = <1>;
+		monitor-timer-val = <3000>;
+		monitor-timer-count-max = <5>;
+
+		reset-gpio = <&tlmm 84 0x00>;
+		pinctrl-names = "spk_reset_on", "spk_reset_off";
+		pinctrl-0 = <&aw_spk_reset_on>;
+		pinctrl-1 = <&aw_spk_reset_off>;
+
+		status = "okay";
+	};
+
+	aw87xxx_pa_5A@59 {
+		compatible = "awinic,aw87xxx_pa_5A";
+		reg = <0x59>;
+		oplus-real-addr = <0x5A>;
+		// AW87339
+		reset-gpio = <&tlmm 111 0x00>;
+		pinctrl-names = "rcv_reset_on", "rcv_reset_off";
+		pinctrl-0 = <&aw_rcv_reset_on>;
+		pinctrl-1 = <&aw_rcv_reset_off>;
+
+		// AW87359
+		pa-channel = < 1 >;
+		/* actflag-gain-array: off music voice fm rcv */
+		actflag-gain-array = < 0x00 0x08 0x08 0x08 0x00 >;
+		/*actflag-auto-run;*/
+		gain-reg-addr = <0x06>;
+		monitor-flag = <1>;
+		monitor-timer-val = <3000>;
+		monitor-timer-count-max = <5>;
+
+		status = "okay";
+	};
+
+	sia81xx_i2c_L@58 {
+		compatible = "si,sia81xx-i2c";
+		reg = <0x58>;
+
+		si,sia81xx-dev = <&sia81xx_L>;
+	};
+
+	sia81xx_i2c_R@5A {
+		compatible = "si,sia81xx-i2c";
+		reg = <0x5A>;
+		si,sia81xx-dev = <&sia81xx_R>;
+	};
+
+};
+
+&swr1 {
+	/delete-property/ qcom,disable-div2-clk-switch;
+};
+&wcd937x_codec {
+	/delete-property/ qcom,cdc-micbias1-mv;
+	/delete-property/ qcom,cdc-micbias2-mv;
+	/delete-property/ qcom,cdc-micbias3-mv;
+	qcom,cdc-micbias1-mv = <2700>;
+	qcom,cdc-micbias2-mv = <2700>;
+	qcom,cdc-micbias3-mv = <2700>;
+};
+
+&adsp_mem {
+	compatible = "removed-dma-pool";
+	size = <0 0xC00000>;
+	no-map;
+	/delete-property/ reusable;
+};
+
